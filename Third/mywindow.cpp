@@ -9,6 +9,8 @@ MyWindow::MyWindow(QWidget *parent) : QDialog(parent)
     checkInversion = new QCheckBox("Inversion");
 
     butStart = new QPushButton("Start");
+    butStart->setDefault(true);
+    butStart->setEnabled(false);
     butExit = new QPushButton("Exit");
 
     QHBoxLayout *layoutIn = new QHBoxLayout;
@@ -28,10 +30,12 @@ MyWindow::MyWindow(QWidget *parent) : QDialog(parent)
     layoutWithAll->addLayout(layoutRight);
     layoutWithAll->addLayout(layoutLeft);
 
-    //setLayout(layoutWithAll);
-    //QWidget *windowMain = new QWidget();
-    //windowMain->setLayout(layoutWithAll);
-    //windowMain->show();
+    connect(editLine, SIGNAL(textChanged(QString)), this, SLOT(TextChanged(QString)));
+    connect(butExit, SIGNAL(clicked()), this, SLOT(close()));
+    connect(butStart, SIGNAL(clicked()), this, SLOT(ButStartClicked()));
+
+    rowAndString *str = new rowAndString;
+    connect(this, SIGNAL(SignalNoChecked(QString)), str, SLOT(SignalNoChecked(QString)));
 }
 
 MyWindow::Show()
@@ -41,3 +45,17 @@ MyWindow::Show()
     windowMain->show();
 }
 
+void MyWindow::TextChanged(QString str)
+{
+    butStart->setEnabled(!str.isEmpty());
+}
+
+void MyWindow::ButStartClicked()
+{
+    if(!checkUppercase->isChecked() && !checkInversion->isChecked())
+        emit SignalNoChecked(editLine->text());
+    if(checkUppercase->isChecked())
+        emit SignalUppercase(editLine->text());
+    if(checkInversion->isChecked())
+        emit SignalInversion(editLine->text());
+}
