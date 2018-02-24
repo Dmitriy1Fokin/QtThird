@@ -33,9 +33,7 @@ MyWindow::MyWindow(QWidget *parent) : QDialog(parent)
     connect(editLine, SIGNAL(textChanged(QString)), this, SLOT(TextChanged(QString)));
     connect(butExit, SIGNAL(clicked()), this, SLOT(close()));
     connect(butStart, SIGNAL(clicked()), this, SLOT(ButStartClicked()));
-
-    rowAndString *str = new rowAndString;
-    connect(this, SIGNAL(SignalNoChecked(QString)), str, SLOT(SignalNoChecked(QString)));
+    connect(this, SIGNAL(SignalNoChecked(QString)), this, SLOT(SlotNoChecked(QString)));
 }
 
 MyWindow::Show()
@@ -58,4 +56,11 @@ void MyWindow::ButStartClicked()
         emit SignalUppercase(editLine->text());
     if(checkInversion->isChecked())
         emit SignalInversion(editLine->text());
+}
+
+void MyWindow::SlotNoChecked(QString str)
+{
+    QMessageBox msg;
+    msg.setText(str);
+    msg.exec();
 }
